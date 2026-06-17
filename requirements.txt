@@ -1,0 +1,2 @@
+# Dependencias Python del proyecto Javaguayo.
+# Actualmente se utiliza Tkinter, incluido en Python.
