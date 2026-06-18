@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Permitir librerías necesarias para el analizador Java
+!analizador_java/lib/
+!analizador_java/lib/*.jar
