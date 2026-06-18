@@ -1,2 +1,15 @@
-# Dependencias Python del proyecto Javaguayo.
-# Actualmente se utiliza Tkinter, incluido en Python.
+# Dependencias Python del proyecto.
+# Actualmente no se requieren paquetes externos de Python.
+# La interfaz utiliza Tkinter, incluido en la instalación estándar de Python.
+
+# Herramientas externas utilizadas en el proyecto:
+# - Java JDK
+# - JFlex 1.9.1
+# - Java CUP v0.11b 20160615
+#
+# Los archivos .jar correspondientes se encuentran en:
+# analizador_java/lib/
+#
+# - jflex.jar
+# - java-cup.jar
+# - java-cup-runtime.jar

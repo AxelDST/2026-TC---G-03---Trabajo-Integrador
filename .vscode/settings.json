@@ -1,0 +1,10 @@
+{
+  "java.project.sourcePaths": [
+    "analizador_java/src",
+    "analizador_java/generated"
+  ],
+  "java.project.outputPath": "analizador_java/bin",
+  "java.project.referencedLibraries": [
+    "analizador_java/lib/*.jar"
+  ]
+}

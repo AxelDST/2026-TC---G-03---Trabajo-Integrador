@@ -1,0 +1,16 @@
+clase Calculadora {
+
+    int resultado;
+
+    int sumar(int a, int b) {
+        retornar a + b;
+    }
+
+    void inicio() {
+        int x = 10;
+        int y = 25;
+        int suma = x + y;
+
+        imprimir(suma);
+    }
+}
