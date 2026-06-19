@@ -1,0 +1,6 @@
+clase Mensajes {
+
+    void inicio() {
+        imprimir("Hola mundo")#;
+    }
+}

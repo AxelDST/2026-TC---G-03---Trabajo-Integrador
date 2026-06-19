@@ -147,10 +147,14 @@ Este comando genera los archivos `.class` en:
 analizador_java/bin/
 ```
 
-### 6. Ejecutar un caso correcto
+### 6. Ejecutar casos correctos
 
 ```powershell
 java -cp "analizador_java\bin;analizador_java\lib\java-cup-runtime.jar" Main ejemplos\correcto_01.jvg
+
+java -cp "analizador_java\bin;analizador_java\lib\java-cup-runtime.jar" Main ejemplos\correcto_02.jvg
+
+java -cp "analizador_java\bin;analizador_java\lib\java-cup-runtime.jar" Main ejemplos\correcto_03.jvg
 ```
 
 Salida esperada:
@@ -159,10 +163,14 @@ Salida esperada:
 Análisis sintáctico correcto.
 ```
 
-### 7. Ejecutar un caso con error léxico
+### 7. Ejecutar casos con error léxico
 
 ```powershell
 java -cp "analizador_java\bin;analizador_java\lib\java-cup-runtime.jar" Main ejemplos\error_lexico_01.jvg
+
+java -cp "analizador_java\bin;analizador_java\lib\java-cup-runtime.jar" Main ejemplos\error_lexico_02.jvg
+
+java -cp "analizador_java\bin;analizador_java\lib\java-cup-runtime.jar" Main ejemplos\error_lexico_03.jvg
 ```
 
 Salida esperada:
@@ -172,10 +180,14 @@ Error léxico ...
 Análisis finalizado con errores.
 ```
 
-### 8. Ejecutar un caso con error sintáctico
+### 8. Ejecutar casos con error sintáctico
 
 ```powershell
 java -cp "analizador_java\bin;analizador_java\lib\java-cup-runtime.jar" Main ejemplos\error_sintactico_01.jvg
+
+java -cp "analizador_java\bin;analizador_java\lib\java-cup-runtime.jar" Main ejemplos\error_sintactico_02.jvg
+
+java -cp "analizador_java\bin;analizador_java\lib\java-cup-runtime.jar" Main ejemplos\error_sintactico_03.jvg
 ```
 
 Salida esperada:

@@ -1,0 +1,9 @@
+clase Condicion {
+
+    void inicio() {
+        int x = 5;
+
+        si (x > 0)
+            imprimir(x);
+    }
+}

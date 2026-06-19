@@ -1,0 +1,7 @@
+clase Calculadora {
+
+    void inicio() {
+        int x = 10@;
+        imprimir(x);
+    }
+}
