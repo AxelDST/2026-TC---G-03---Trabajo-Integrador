@@ -1,0 +1,7 @@
+clase Bloque {
+
+    void inicio() {
+        int y = 2;
+        imprimir(y);
+    
+}

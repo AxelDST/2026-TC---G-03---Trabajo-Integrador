@@ -1,0 +1,265 @@
+import java_cup.runtime.Symbol;
+
+/* Código auxiliar del parser */
+parser code {:
+    private boolean huboErrores = false;
+
+    public boolean huboErrores() {
+        return huboErrores;
+    }
+
+    public void syntax_error(Symbol s) {
+        huboErrores = true;
+
+        if (s != null) {
+            System.err.println(
+                "Error sintáctico en línea " + s.left +
+                ", columna " + s.right +
+                ". Token recibido: " + s.value
+            );
+        } else {
+            System.err.println("Error sintáctico: token inesperado.");
+        }
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+        huboErrores = true;
+        System.err.println("Error sintáctico no recuperable.");
+    }
+:};
+
+/* Terminales */
+terminal CLASE, RETORNAR, SI, SINO, MIENTRAS, REPETIR, NUEVO, IMPRIMIR, INICIO;
+
+terminal INT, DECIMAL, STRING, OBJETO, BOOL, VOID, CHAR;
+
+terminal AND, OR;
+
+terminal IGUAL, DISTINTO, MENOR_IGUAL, MAYOR_IGUAL, MENOR, MAYOR;
+
+terminal ASIGNAR;
+
+terminal MAS, MENOS, POR, DIV;
+
+terminal LPAREN, RPAREN, LBRACE, RBRACE;
+
+terminal PUNTOYCOMA, COMA, PUNTO;
+
+terminal LIT_DEC, LIT_INT, LIT_STR, LIT_CHAR, LIT_BOOL, LIT_NULL;
+
+terminal NOMBRE_CLASE, IDENTIFICADOR;
+
+/* No terminales */
+non terminal programa;
+non terminal lista_clases;
+non terminal clase;
+non terminal miembros;
+non terminal miembro;
+non terminal tipo;
+non terminal tipo_primitivo;
+non terminal resto_miembro;
+non terminal parametros;
+non terminal lista_parametros;
+non terminal parametro;
+non terminal sentencias;
+non terminal sentencia;
+non terminal declaracion_primitiva;
+non terminal declaracion_objeto;
+non terminal resto_declaracion_objeto;
+non terminal asignacion;
+non terminal invocacion;
+non terminal impresion;
+non terminal condicional;
+non terminal mientras_stmt;
+non terminal repetir_stmt;
+non terminal retorno;
+non terminal argumentos;
+non terminal lista_argumentos;
+non terminal expresion;
+non terminal literal;
+
+/* Precedencia de operadores */
+precedence left OR;
+precedence left AND;
+precedence nonassoc IGUAL, DISTINTO, MENOR, MAYOR, MENOR_IGUAL, MAYOR_IGUAL;
+precedence left MAS, MENOS;
+precedence left POR, DIV;
+
+/* Símbolo inicial */
+start with programa;
+
+/* Gramática */
+
+programa ::=
+      lista_clases
+;
+
+lista_clases ::=
+      lista_clases clase
+    | clase
+;
+
+clase ::=
+      CLASE NOMBRE_CLASE LBRACE miembros RBRACE
+;
+
+miembros ::=
+      miembros miembro
+    | /* vacío */
+;
+
+/*
+   Se factoriza miembro para evitar conflictos entre:
+   atributo: int x;
+   método:   int sumar(...) { ... }
+*/
+miembro ::=
+      tipo IDENTIFICADOR resto_miembro
+    | VOID IDENTIFICADOR LPAREN parametros RPAREN LBRACE sentencias RBRACE
+    | VOID INICIO LPAREN RPAREN LBRACE sentencias RBRACE
+;
+
+resto_miembro ::=
+      PUNTOYCOMA
+    | ASIGNAR expresion PUNTOYCOMA
+    | LPAREN parametros RPAREN LBRACE sentencias RBRACE
+;
+
+tipo ::=
+      tipo_primitivo
+    | NOMBRE_CLASE
+;
+
+tipo_primitivo ::=
+      INT
+    | DECIMAL
+    | STRING
+    | OBJETO
+    | BOOL
+    | CHAR
+;
+
+parametros ::=
+      lista_parametros
+    | /* vacío */
+;
+
+lista_parametros ::=
+      lista_parametros COMA parametro
+    | parametro
+;
+
+parametro ::=
+      tipo IDENTIFICADOR
+;
+
+sentencias ::=
+      sentencias sentencia
+    | /* vacío */
+;
+
+sentencia ::=
+      declaracion_primitiva PUNTOYCOMA
+    | declaracion_objeto PUNTOYCOMA
+    | asignacion PUNTOYCOMA
+    | invocacion PUNTOYCOMA
+    | impresion PUNTOYCOMA
+    | condicional
+    | mientras_stmt
+    | repetir_stmt
+    | retorno PUNTOYCOMA
+    | error PUNTOYCOMA
+        {: System.err.println("Se recuperó de un error sintáctico en una sentencia."); :}
+;
+
+/*
+   Declaraciones primitivas:
+   int x;
+   int x = 10;
+   string mensaje = "hola";
+*/
+declaracion_primitiva ::=
+      tipo_primitivo IDENTIFICADOR
+    | tipo_primitivo IDENTIFICADOR ASIGNAR expresion
+;
+
+/*
+   Declaraciones de objetos:
+   Calculadora calc;
+   Calculadora calc = nuevo Calculadora();
+*/
+declaracion_objeto ::=
+      NOMBRE_CLASE IDENTIFICADOR resto_declaracion_objeto
+;
+
+resto_declaracion_objeto ::=
+      /* vacío */
+    | ASIGNAR NUEVO NOMBRE_CLASE LPAREN RPAREN
+;
+
+asignacion ::=
+      IDENTIFICADOR ASIGNAR expresion
+;
+
+invocacion ::=
+      IDENTIFICADOR PUNTO IDENTIFICADOR LPAREN argumentos RPAREN
+;
+
+impresion ::=
+      IMPRIMIR LPAREN expresion RPAREN
+;
+
+condicional ::=
+      SI LPAREN expresion RPAREN LBRACE sentencias RBRACE
+    | SI LPAREN expresion RPAREN LBRACE sentencias RBRACE SINO LBRACE sentencias RBRACE
+;
+
+mientras_stmt ::=
+      MIENTRAS LPAREN expresion RPAREN LBRACE sentencias RBRACE
+;
+
+repetir_stmt ::=
+      REPETIR LPAREN expresion RPAREN LBRACE sentencias RBRACE
+;
+
+retorno ::=
+      RETORNAR expresion
+;
+
+argumentos ::=
+      lista_argumentos
+    | /* vacío */
+;
+
+lista_argumentos ::=
+      lista_argumentos COMA expresion
+    | expresion
+;
+
+expresion ::=
+      expresion OR expresion
+    | expresion AND expresion
+    | expresion IGUAL expresion
+    | expresion DISTINTO expresion
+    | expresion MENOR expresion
+    | expresion MAYOR expresion
+    | expresion MENOR_IGUAL expresion
+    | expresion MAYOR_IGUAL expresion
+    | expresion MAS expresion
+    | expresion MENOS expresion
+    | expresion POR expresion
+    | expresion DIV expresion
+    | LPAREN expresion RPAREN
+    | IDENTIFICADOR
+    | invocacion
+    | literal
+;
+
+literal ::=
+      LIT_INT
+    | LIT_DEC
+    | LIT_STR
+    | LIT_CHAR
+    | LIT_BOOL
+    | LIT_NULL
+;

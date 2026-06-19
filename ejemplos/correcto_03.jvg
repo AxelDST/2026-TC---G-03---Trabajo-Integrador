@@ -1,0 +1,13 @@
+clase Calculadora {
+
+    int sumar(int a, int b) {
+        retornar a + b;
+    }
+
+    void inicio() {
+        Calculadora calc = nuevo Calculadora();
+        int resultado = calc.sumar(4, 5);
+
+        imprimir(resultado);
+    }
+}
