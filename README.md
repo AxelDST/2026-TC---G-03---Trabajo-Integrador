@@ -9,36 +9,66 @@ Mini IDE para el lenguaje de programación **Javaguayo**, desarrollado para la c
 - Dos Santos Axel Joan
 - Mittelstedt Gabriel Leonardo
 - Escalada Leandro Ezequiel
+---
+
+## Tabla de contenidos
+
+1. [¿Qué es Javaguayo?](#qué-es-javaguayo)
+2. [Arquitectura del proyecto](#arquitectura-del-proyecto)
+3. [Tokens del lenguaje](#tokens-del-lenguaje)
+4. [Requisitos](#requisitos)
+5. [Ejecución](#ejecución)
+6. [Funcionalidades del IDE](#funcionalidades-del-ide)
+7. [Comandos de generación y prueba](#comandos-de-generación-y-prueba)
+8. [Orden completo recomendado](#orden-completo-recomendado)
 
 ---
 
 ## ¿Qué es Javaguayo?
 
-Javaguayo es un mini-lenguaje orientado a objetos con sintaxis inspirada en Java,
-diseñado con fines académicos para explorar los fundamentos formales de los
-lenguajes de programación: análisis léxico, autómatas finitos y gramáticas libres
-de contexto.
+Javaguayo es un mini-lenguaje orientado a objetos con sintaxis inspirada en Java, diseñado con fines académicos para explorar los fundamentos formales de los lenguajes de programación:
 
+- **Análisis léxico** mediante autómatas finitos deterministas (AFD)
+- **Análisis sintáctico** mediante gramáticas libres de contexto (GLC)
+- **Interpretación** del bloque `inicio()` con soporte a operaciones básicas e impresión por pantalla
+
+Los archivos fuente Javaguayo usan la extensión **`.jvg`**.
 
 ---
 
+## Arquitectura del proyecto
 
-## Funcionalidades del IDE
-
-| Función | Descripción |
-|---|---|
-| Ejecutar | Interpreta el bloque `inicio()` y muestra la salida |
-| Analizar | Corre el analizador léxico y muestra la tabla de tokens |
-|  Abrir | Carga un archivo `.jvg` desde disco |
-| Guardar | Guarda el código actual en un archivo `.jvg` |
-| Limpiar | Limpia el editor y todos los paneles |
-| Ejemplo | Carga un programa de ejemplo predefinido |
-
-### Pestañas del panel derecho
-
-- **Salida** — resultado de la ejecución
-- **Tokens** — tabla con cada token reconocido (línea, columna, tipo, valor)
-- **Errores** — lista de errores léxicos y sintácticos detectados
+```text
+2026-TC---G-03---Trabajo-Integrador/
+│
+├── main.py                    # Punto de entrada del IDE
+├── requirements.txt           # Dependencias Python (solo stdlib)
+│
+├── ide/                       # Interfaz gráfica (Python / Tkinter)
+│   ├── app.py                 # Ventana principal y lógica del IDE
+│   ├── editor.py              # Widget de editor de código
+│   ├── results_panel.py       # Panel de salida / tokens / errores
+│   ├── analyzer.py            # Puente Python ↔ analizador Java
+│   └── theme.py               # Paleta de colores y estilos
+│
+├── analizador_java/           # Núcleo del analizador (Java)
+│   ├── src/
+│   │   ├── Lexer.flex         # Especificación léxica (JFlex)
+│   │   ├── Parser.cup         # Gramática sintáctica (Java CUP)
+│   │   ├── IDEAnalyzer.java   # Interfaz de análisis para el IDE
+│   │   └── Main.java          # Punto de entrada CLI del analizador
+│   ├── generated/             # Código Java generado (Lexer.java, parser.java, sym.java)
+│   ├── bin/                   # Clases compiladas (.class)
+│   └── lib/
+│       ├── jflex.jar
+│       ├── java-cup.jar
+│       └── java-cup-runtime.jar
+│
+└── ejemplos/                  # Programas .jvg de prueba
+    ├── correcto_01.jvg … correcto_03.jvg
+    ├── error_lexico_01.jvg … error_lexico_03.jvg
+    └── error_sintactico_01.jvg … error_sintactico_03.jvg
+```
 
 ---
 
@@ -47,23 +77,35 @@ de contexto.
 | Categoría | Ejemplos |
 |---|---|
 | Palabras reservadas | `clase`, `si`, `sino`, `mientras`, `repetir`, `nuevo`, `imprimir`, `retornar`, `inicio` |
-| Tipos de dato | `int`, `decimal`, `string`, `bool`, `char`, `objeto`, `void`, `null` |
+| Tipos de dato | `int`, `decimal`, `string`, `bool`, `char`, `objeto`, `void` |
 | Operadores matemáticos | `+`, `-`, `*`, `/` |
 | Operadores relacionales | `==`, `!=`, `<`, `>`, `<=`, `>=` |
 | Operadores lógicos | `and`, `or` |
-| Literales | `42`, `-3.14`, `"texto"`, `'c'`, `true`, `false` |
-| Identificadores | `MiClase`, `miMetodo`, `miVariable` |
+| Operador de asignación | `=` |
+| Literales | `42`, `-3.14`, `"texto"`, `'c'`, `true`, `false`, `null` |
+| Nombre de clase | `MiClase`, `Calculadora`, `Animal` _(inicia con mayúscula)_ |
+| Identificadores | `miMetodo`, `miVariable`, `x` _(inicia con minúscula)_ |
+| Símbolos especiales | `(`, `)`, `{`, `}`, `;`, `,`, `.` |
+| Comentarios | `// comentario de línea` _(ignorados por el analizador)_ |
 
-## Requisitos del proyecto
+---
 
-Para ejecutar el proyecto se requiere tener instalado:
+## Requisitos
 
-* Python 3.x
-* Java JDK
-* JFlex 1.9.1
-* Java CUP v0.11b 20160615
+### Software necesario
 
-Las librerías utilizadas por el analizador se encuentran en:
+| Herramienta | Versión mínima |
+|---|---|
+| Python | 3.x (Tkinter incluido) |
+| Java JDK | 11 o superior |
+| JFlex | 1.9.1 |
+| Java CUP | v0.11b 20160615 |
+
+> **Nota:** Python no requiere paquetes externos. La interfaz utiliza únicamente `tkinter`, que viene incluido en la instalación estándar de Python.
+
+### Librerías Java (`.jar`)
+
+Las librerías del analizador se encuentran en `analizador_java/lib/`:
 
 ```text
 analizador_java/lib/
@@ -71,6 +113,50 @@ analizador_java/lib/
 ├── java-cup.jar
 └── java-cup-runtime.jar
 ```
+
+---
+
+## Ejecución
+
+Antes de ejecutar el IDE, asegurarse de haber completado los pasos de [Comandos de generación y prueba](#comandos-de-generación-y-prueba) al menos una vez (generar y compilar el analizador Java).
+
+Una vez que el analizador está compilado, iniciar el IDE con:
+
+```powershell
+python main.py
+```
+
+Esto abre la ventana principal del IDE Javaguayo. Desde allí se puede:
+
+- Escribir código Javaguayo directamente en el editor
+- Abrir un archivo `.jvg` existente con el botón **Abrir**
+- Cargar un ejemplo predefinido con el botón **Ejemplo**
+- Ejecutar o analizar el código con los botones de la barra de herramientas
+
+---
+
+## Funcionalidades del IDE
+
+### Barra de herramientas
+
+| Botón | Acción |
+|---|---|
+| **Ejecutar** | Interpreta el bloque `inicio()` y muestra la salida |
+| **Analizar** | Corre el analizador léxico y muestra la tabla de tokens |
+| **Abrir** | Carga un archivo `.jvg` desde disco |
+| **Guardar** | Guarda el código actual en un archivo `.jvg` |
+| **Limpiar** | Limpia el editor y todos los paneles |
+| **Ejemplo** | Carga un programa de ejemplo predefinido |
+
+### Pestañas del panel derecho
+
+| Pestaña | Contenido |
+|---|---|
+| **Salida** | Resultado de la ejecución del programa |
+| **Tokens** | Tabla con cada token reconocido: línea, columna, tipo y valor |
+| **Errores** | Lista de errores léxicos y sintácticos detectados |
+
+---
 
 ## Comandos de generación y prueba
 
@@ -197,6 +283,8 @@ Error sintáctico ...
 Análisis finalizado con errores.
 ```
 
+---
+
 ## Orden completo recomendado
 
 Cada vez que se modifique `Lexer.flex` o `Parser.cup`, ejecutar:
@@ -214,4 +302,3 @@ Luego probar con:
 ```powershell
 java -cp "analizador_java\bin;analizador_java\lib\java-cup-runtime.jar" Main ejemplos\correcto_01.jvg
 ```
-
